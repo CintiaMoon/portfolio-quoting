@@ -1,0 +1,38 @@
+<configuration>
+
+    <shutdownHook class="ch.qos.logback.core.hook.DelayingShutdownHook"/>
+
+    <springProperty scope="context" name="APP_NAME" source="info.app.name"/>
+    <springProperty scope="context" name="APP_VERSION" source="info.app.version"/>
+
+    <!-- console appender -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} %-5level | %logger{50} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- rolling file appender: create one file per day, keep logs of last 30 days, max. 100 MB -->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/server.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>./logs/localeTest.%d{yyyy-MM-dd}.log</fileNamePattern>
+        </rollingPolicy>
+
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level %replace(| %X{tenant}/%X{user} ){'\| / ',''}| %logger{50} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    
+    <logger name="com.exercise" level="debug" additivity="false">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="FILE"/> 
+    </logger>
+
+    <!-- root logger: log everything with level info and above to console and file -->
+    <root level="info">
+        <appender-ref ref="CONSOLE"/>
+    </root>
+
+</configuration>
